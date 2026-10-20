@@ -54,7 +54,7 @@ footer{color:var(--mut);font-size:.8rem;text-align:center;margin-top:24px}
 // ===== BEÁLLÍTÁSOK =====
 const API_URL = "https://script.google.com/macros/s/AKfycbx3AWJGSHry95Kv_sxQC7bsU_QMJBpzVOtA6HLhq57UBstGn7n_RTr4YV5xP5X008PwbQ/exec";   // Google Apps Script web app URL
 const PRODUCTS = [
-  {id:"fusion-magyar", name:"Autodesk Fusion magyarítás", price:"ingyenes (teszt)"}
+  {id:"fusion-magyar", name:"Autodesk Fusion magyarítás", price:""}
 ];
 // =======================
 
@@ -75,9 +75,15 @@ f.addEventListener("submit", async e=>{
                            product:f.p.value})});
     const d = await r.json();
     if(!d.ok) throw new Error(d.error||"Hiba");
-    msg.className="msg ok";
-    msg.innerHTML=`Köszönjük! <a class="dl" href="${d.url}" target="_blank" rel="noopener">Letöltés indítása</a>`;
-    window.open(d.url,"_blank");
+    if(d.status==="pending"){
+      msg.className="msg"; msg.textContent="Ez az email cím még nincs jóváhagyva. A fizetés megérkezése után próbáld újra.";
+    }else if(d.status==="sent"){
+      msg.className="msg ok"; msg.textContent="A letöltési linket elküldtük az email címedre.";
+    }else{
+      msg.className="msg ok";
+      msg.innerHTML=`Köszönjük! <a class="dl" href="${d.url}" target="_blank" rel="noopener">Letöltés indítása</a>`;
+      window.open(d.url,"_blank");
+    }
   }catch(err){
     msg.className="msg err"; msg.textContent="Nem sikerült: "+err.message;
   }finally{ btn.disabled=false; }
