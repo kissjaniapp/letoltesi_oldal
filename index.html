@@ -80,9 +80,13 @@ f.addEventListener("submit", async e=>{
     }else if(d.status==="sent"){
       msg.className="msg ok"; msg.textContent="A letöltési linket elküldtük az email címedre.";
     }else{
+      btn.style.display="none";
+      document.getElementById("email").readOnly=true;
       msg.className="msg ok";
-      msg.innerHTML=`Köszönjük! <a class="dl" href="${d.url}" target="_blank" rel="noopener">Letöltés indítása</a>`;
-      window.open(d.url,"_blank");
+      msg.innerHTML="<b>Köszönjük a vásárlást!</b><br><small>Ha a letöltés nem indult el, frissítsd az oldalt, és add meg újra az email címedet.</small>";
+      const a=document.createElement("a"); a.href=d.url; a.style.display="none";
+      document.body.appendChild(a); a.click(); a.remove();
+      return;
     }
   }catch(err){
     msg.className="msg err"; msg.textContent="Nem sikerült: "+err.message;
